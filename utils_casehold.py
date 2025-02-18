@@ -132,41 +132,6 @@ if is_torch_available():
         def __getitem__(self, i) -> InputFeatures:
             return self.features[i]
 
-
-if is_tf_available():
-    import tensorflow as tf
-
-    class TFMultipleChoiceDataset:
-        """
-        TensorFlow multiple choice dataset class
-        """
-
-        features: List[InputFeatures]
-
-        def __init__(
-            self,
-            data_dir: str,
-            tokenizer: PreTrainedTokenizer,
-            task: str,
-            max_seq_length: Optional[int] = 128,
-            overwrite_cache=False,
-            mode: Split = Split.train,
-        ):
-            processor = processors[task]()
-
-            logger.info(f"Creating features from dataset file at {data_dir}")
-            label_list = processor.get_labels()
-            if mode == Split.dev:
-                examples = processor.get_dev_examples(data_dir)
-            elif mode == Split.test:
-                examples = processor.get_test_examples(data_dir)
-            else:
-                examples = processor.get_train_examples(data_dir)
-            logger.info("Training examples: %s", len(examples))
-
-            self.features = convert_examples_to_features(
-                examples,
-
 class DataProcessor:
     """Base class for data converters for multiple choice data sets."""
 
