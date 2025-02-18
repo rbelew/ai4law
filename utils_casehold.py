@@ -166,59 +166,6 @@ if is_tf_available():
 
             self.features = convert_examples_to_features(
                 examples,
-                label_list,
-                max_seq_length,
-                tokenizer,
-            )
-
-            def gen():
-                for (ex_index, ex) in tqdm.tqdm(enumerate(self.features), desc="convert examples to features"):
-                    if ex_index % 10000 == 0:
-                        logger.info("Writing example %d of %d" % (ex_index, len(examples)))
-
-                    yield (
-                        {
-                            "example_id": 0,
-                            "input_ids": ex.input_ids,
-                            "attention_mask": ex.attention_mask,
-                            "token_type_ids": ex.token_type_ids,
-                        },
-                        ex.label,
-                    )
-
-            self.dataset = tf.data.Dataset.from_generator(
-                gen,
-                (
-                    {
-                        "example_id": tf.int32,
-                        "input_ids": tf.int32,
-                        "attention_mask": tf.int32,
-                        "token_type_ids": tf.int32,
-                    },
-                    tf.int64,
-                ),
-                (
-                    {
-                        "example_id": tf.TensorShape([]),
-                        "input_ids": tf.TensorShape([None, None]),
-                        "attention_mask": tf.TensorShape([None, None]),
-                        "token_type_ids": tf.TensorShape([None, None]),
-                    },
-                    tf.TensorShape([]),
-                ),
-            )
-
-        def get_dataset(self):
-            self.dataset = self.dataset.apply(tf.data.experimental.assert_cardinality(len(self.features)))
-
-            return self.dataset
-
-        def __len__(self):
-            return len(self.features)
-
-        def __getitem__(self, i) -> InputFeatures:
-            return self.features[i]
-
 
 class DataProcessor:
     """Base class for data converters for multiple choice data sets."""
